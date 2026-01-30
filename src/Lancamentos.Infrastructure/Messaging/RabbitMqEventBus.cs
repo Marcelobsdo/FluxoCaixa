@@ -22,7 +22,6 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
         };
     }
 
-    // Garante inicialização lazy (evita async no construtor)
     private async Task EnsureInitializedAsync(CancellationToken ct)
     {
         if (_connection is not null && _channel is not null)
@@ -49,7 +48,6 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
         var json = JsonSerializer.Serialize(@event);
         var body = Encoding.UTF8.GetBytes(json);
 
-        // Propriedades são opcionais. Se quiser persistência, marque delivery mode (varia conforme API da versão).
         await _channel!.BasicPublishAsync(
             exchange: ExchangeName,
             routingKey: string.Empty,

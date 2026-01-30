@@ -10,7 +10,6 @@ public sealed class IdempotencyStore(ConsolidadoDbContext db) : IIdempotencyStor
 
     public async Task<bool> TryMarkProcessedAsync(Guid eventId, string eventName, CancellationToken cancellationToken)
     {
-        // Retorna 1 se inseriu, 0 se já existia
         var rows = await _db.Database.ExecuteSqlInterpolatedAsync($@"
             INSERT INTO processed_event (event_id, event_name, processed_at_utc)
             VALUES ({eventId}, {eventName}, NOW())

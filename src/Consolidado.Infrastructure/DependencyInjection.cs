@@ -34,7 +34,6 @@ public static class DependencyInjection
 
     public static IServiceCollection AddInfrastructureQueries(this IServiceCollection services, IConfiguration config)
     {
-        // se quiser, reutilize a mesma cs do ConsolidadoDb
         var cs = config.GetConnectionString("ConsolidadoDb");
         if (string.IsNullOrWhiteSpace(cs))
             throw new InvalidOperationException("ConnectionStrings:ConsolidadoDb não configurada.");

@@ -28,7 +28,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
     {
         _channel ??= await _connection.CreateChannelAsync();
 
-        // 1) Exchange (Fanout)
         await _channel.ExchangeDeclareAsync(
             exchange: ExchangeName,
             type: ExchangeType.Fanout,
@@ -37,7 +36,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             arguments: null,
             cancellationToken: stoppingToken);
 
-        // 2) Queue
         await _channel.QueueDeclareAsync(
             queue: QueueName,
             durable: true,
@@ -46,7 +44,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             arguments: null,
             cancellationToken: stoppingToken);
 
-        // 3) Binding (O PONTO CRÍTICO)
         await _channel.QueueBindAsync(
             queue: QueueName,
             exchange: ExchangeName,
@@ -54,7 +51,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             arguments: null,
             cancellationToken: stoppingToken);
 
-        // 4) QoS — limita mensagens "em voo"
         await _channel.BasicQosAsync(
             prefetchSize: 0,
             prefetchCount: 50,
@@ -65,7 +61,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
 
         consumer.ReceivedAsync += async (_, ea) =>
         {
-            // Não use stoppingToken aqui — garante Ack/Nack
             var ackToken = CancellationToken.None;
 
             try
@@ -95,7 +90,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             }
             catch (JsonException)
             {
-                // Payload inválido → descarta (ideal: DLQ)
                 await _channel!.BasicNackAsync(
                     ea.DeliveryTag,
                     multiple: false,
@@ -104,8 +98,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             }
             catch
             {
-                // Erro no processamento
-                // Para o teste: descarta para evitar loop infinito
                 await _channel!.BasicNackAsync(
                     ea.DeliveryTag,
                     multiple: false,
