@@ -100,19 +100,19 @@ A solução foi implementada utilizando **arquitetura baseada em eventos**, com 
 ## 1. Clone o repositório:
 git clone https://github.com/Marcelobsdo/FluxoCaixa.git
 
-## 2.Suba a infraestrutura (PostgreSQL e RabbitMQ):
+## 2. Suba a infraestrutura (PostgreSQL e RabbitMQ):
 
 cd FluxoCaixa
 
 docker compose up -d postgres-lancamentos postgres-consolidado rabbitmq
 
-## 3.Aplique as migrations nos bancos de dados:
+## 3. Aplique as migrations nos bancos de dados:
 
 dotnet ef database update --project src/Lancamentos.Infrastructure --startup-project src/Lancamentos.API --context LancamentosDbContext
 
 dotnet ef database update --project src/Consolidado.Infrastructure --context ConsolidadoDbContext
 
-## 4.Suba os serviços da aplicação:
+## 4. Suba os serviços da aplicação:
 
 docker compose up -d --build
 
