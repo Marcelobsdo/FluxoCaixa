@@ -1,0 +1,6 @@
+@Consolidado.API_HostAddress = http://localhost:6000
+
+GET {{Consolidado.API_HostAddress}}/swagger/index.html
+Accept: application/json
+
+###

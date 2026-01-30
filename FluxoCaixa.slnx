@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Consolidado/">
+    <Project Path="src/Consolidado.API/Consolidado.API.csproj" />
+    <Project Path="src/Consolidado.Application/Consolidado.Application.csproj" />
+    <Project Path="src/Consolidado.Domain/Consolidado.Domain.csproj" />
+    <Project Path="src/Consolidado.Infrastructure/Consolidado.Infrastructure.csproj" />
+    <Project Path="src/Consolidado.Tests/Consolidado.Tests.csproj" />
+    <Project Path="src/Consolidado.Worker/Consolidado.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/Lancamentos/">
+    <Project Path="src/Lancamentos.API/Lancamentos.API.csproj" />
+    <Project Path="src/Lancamentos.Application/Lancamentos.Application.csproj" />
+    <Project Path="src/Lancamentos.Domain/Lancamentos.Domain.csproj" />
+    <Project Path="src/Lancamentos.Infrastructure/Lancamentos.Infrastructure.csproj" />
+    <Project Path="src/Lancamentos.Tests/Lancamentos.Tests.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared.Events/Shared.Events.csproj" />
+  </Folder>
+</Solution>

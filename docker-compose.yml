@@ -1,0 +1,88 @@
+services:
+
+  postgres-lancamentos:
+    image: postgres:16
+    container_name: postgres-lancamentos
+    environment:
+      POSTGRES_DB: lancamentos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_lancamentos_data:/var/lib/postgresql/data
+
+  postgres-consolidado:
+    image: postgres:16
+    container_name: postgres-consolidado
+    environment:
+      POSTGRES_DB: consolidado
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_consolidado_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  lancamentos-api:
+    build:
+      context: .
+      dockerfile: src/Lancamentos.API/Dockerfile
+    container_name: lancamentos-api
+    depends_on:
+      - postgres-lancamentos
+      - rabbitmq
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__LancamentosDb: Host=postgres-lancamentos;Port=5432;Database=lancamentos;Username=postgres;Password=postgres
+      ConnectionStrings__RabbitMq: amqp://guest:guest@rabbitmq:5672
+    restart: unless-stopped
+
+  consolidado-worker:
+    build:
+      context: .
+      dockerfile: src/Consolidado.Worker/Dockerfile
+    container_name: consolidado-worker
+    depends_on:
+      - postgres-consolidado
+      - rabbitmq
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+      # Worker dentro do Docker => usa nome do serviço
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Port: 5672
+      RabbitMQ__User: guest
+      RabbitMQ__Password: guest
+
+      # Worker dentro do Docker => postgres pelo nome do serviço (porta interna 5432)
+      ConnectionStrings__ConsolidadoDb: Host=postgres-consolidado;Port=5432;Database=consolidado;Username=postgres;Password=postgres
+
+    restart: unless-stopped
+
+  consolidado-api:
+    build:
+      context: .
+      dockerfile: src/Consolidado.API/Dockerfile
+    container_name: consolidado-api
+    depends_on:
+      - postgres-consolidado
+    ports:
+      - "6002:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__ConsolidadoDb: Host=postgres-consolidado;Port=5432;Database=consolidado;Username=postgres;Password=postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_lancamentos_data:
+  postgres_consolidado_data:
