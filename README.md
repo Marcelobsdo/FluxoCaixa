@@ -4,7 +4,7 @@ Implementação de uma solução backend para controle de **fluxo de caixa diár
 
 O foco do projeto é demonstrar **qualidade de código**, **arquitetura**, **resiliência**, **escalabilidade** e **boas práticas** de engenharia de software.
 
-<img width="1536" height="1024" alt="8f37afe5-3502-43c2-81df-03bdd43d7656" src="https://github.com/user-attachments/assets/5dca1eed-ded8-4cd1-9ee7-7b3ec5429e2b" />
+<img width="1536" height="1024" alt="d5e4bb3c-001a-41ef-8da9-b83a318f83e9" src="https://github.com/user-attachments/assets/426f7d9d-cdba-436b-ad5c-0c2e912b7ee9" />
 
 ---
 
