@@ -1,4 +1,3 @@
-<img width="1536" height="1024" alt="d5e4bb3c-001a-41ef-8da9-b83a318f83e9" src="https://github.com/user-attachments/assets/426f7d9d-cdba-436b-ad5c-0c2e912b7ee9" />
 # Fluxo de Caixa – Desafio Backend (.NET 8)
 
 Solução backend para **controle de fluxo de caixa diário**, com:
@@ -9,6 +8,8 @@ Solução backend para **controle de fluxo de caixa diário**, com:
 O foco do projeto é demonstrar **arquitetura**, **qualidade de código**, **resiliência**, e uma **experiência de execução previsível** para o avaliador.
 
 ---
+
+<img width="1536" height="1024" alt="d5e4bb3c-001a-41ef-8da9-b83a318f83e9" src="https://github.com/user-attachments/assets/426f7d9d-cdba-436b-ad5c-0c2e912b7ee9" />
 
 ## Visão rápida (o que você precisa saber)
 
