@@ -17,27 +17,49 @@ public sealed class Worker(
     {
         _logger.LogInformation("Consolidado.Worker iniciado");
 
-        await _consumer.StartConsumingAsync(async evento =>
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                using var scope = _scopeFactory.CreateScope();
+                await _consumer.StartConsumingAsync(async evento =>
+                {
+                    try
+                    {
+                        using var scope = _scopeFactory.CreateScope();
 
-                var useCase = scope.ServiceProvider.GetRequiredService<ConsolidarLancamentoUseCase>();
+                        var useCase = scope.ServiceProvider.GetRequiredService<ConsolidarLancamentoUseCase>();
 
-                await useCase.ExecuteAsync(evento, stoppingToken);
+                        await useCase.ExecuteAsync(evento, stoppingToken);
 
-                _logger.LogInformation(
-                    "Evento {EventId} (Lancamento {LancamentoId}) consolidado com sucesso",
-                    evento.EventId, evento.LancamentoId);
+                        _logger.LogInformation(
+                            "Evento {EventId} (Lancamento {LancamentoId}) consolidado com sucesso",
+                            evento.EventId, evento.LancamentoId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex,
+                            "Erro ao processar evento {EventId} (Lancamento {LancamentoId})",
+                            evento.EventId, evento.LancamentoId);
+                    }
+                }, stoppingToken);
+
+                break;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogError(ex,
-                    "Erro ao processar evento {EventId} (Lancamento {LancamentoId})",
-                    evento.EventId, evento.LancamentoId);
+                _logger.LogWarning(ex,
+                    "RabbitMQ indisponível no startup. Tentando novamente em 5s...");
+
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
             }
-        }, stoppingToken);
+        }
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

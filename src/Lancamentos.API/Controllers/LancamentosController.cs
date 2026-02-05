@@ -1,10 +1,12 @@
 ﻿using Lancamentos.API.DTOs;
 using Lancamentos.Application.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lancamentos.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/lancamentos")]
 public class LancamentosController(IMediator mediator) : ControllerBase

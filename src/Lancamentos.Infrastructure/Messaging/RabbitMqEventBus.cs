@@ -1,4 +1,6 @@
 ﻿using Lancamentos.Application.Interfaces;
+using Polly;
+using Polly.Retry;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
@@ -18,11 +20,22 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
     {
         _factory = new ConnectionFactory
         {
-            Uri = new Uri(connectionString)
+            Uri = new Uri(connectionString),
+            AutomaticRecoveryEnabled = true,
+            NetworkRecoveryInterval = TimeSpan.FromSeconds(5)
         };
     }
 
-    private async Task EnsureInitializedAsync(CancellationToken ct)
+    private static readonly AsyncRetryPolicy RetryPolicy =
+    Policy
+        .Handle<Exception>()
+        .WaitAndRetryAsync(
+            retryCount: 4,
+            sleepDurationProvider: attempt =>
+                TimeSpan.FromMilliseconds(Math.Pow(2, attempt) * 200)
+        );
+
+    private async Task EnsureInitializedAsync(CancellationToken cancellationToken)
     {
         if (_connection is not null && _channel is not null)
             return;
@@ -37,22 +50,32 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
             durable: true,
             autoDelete: false,
             arguments: null,
-            cancellationToken: ct);
+            cancellationToken: cancellationToken);
     }
 
-    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken ct = default)
+    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
         where TEvent : class
     {
-        await EnsureInitializedAsync(ct);
+        await RetryPolicy.ExecuteAsync(async () =>
+        {
+            await EnsureInitializedAsync(cancellationToken);
 
-        var json = JsonSerializer.Serialize(@event);
-        var body = Encoding.UTF8.GetBytes(json);
+            var json = JsonSerializer.Serialize(@event);
+            var body = Encoding.UTF8.GetBytes(json);
 
-        await _channel!.BasicPublishAsync(
-            exchange: ExchangeName,
-            routingKey: string.Empty,
-            body: body,
-            cancellationToken: ct);
+            var props = new BasicProperties
+            {
+                DeliveryMode = DeliveryModes.Persistent
+            };
+
+            await _channel!.BasicPublishAsync(
+                exchange: ExchangeName,
+                routingKey: string.Empty,
+                mandatory: true,
+                basicProperties: props,
+                body: body,
+                cancellationToken: cancellationToken);
+        });
     }
 
     public async ValueTask DisposeAsync()

@@ -1,9 +1,11 @@
 ﻿using Consolidado.Application.DTOs;
 using Consolidado.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Consolidado.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/consolidado")]
 public sealed class ConsolidadoController : ControllerBase
