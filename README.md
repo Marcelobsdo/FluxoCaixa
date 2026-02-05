@@ -79,7 +79,7 @@ A solução foi implementada usando **arquitetura baseada em eventos**, com serv
 
 ---
 
-## Como executar do zero (experiência do avaliador)
+## Como executar
 
 ### Pré-requisitos
 - Docker Desktop (Windows/macOS) ou Docker Engine (Linux)
