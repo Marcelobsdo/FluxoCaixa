@@ -256,25 +256,32 @@ docker compose up -d --build
 ```
 
 ---
+## Fora do escopo do desafio (evoluções naturais)
 
-## Possíveis evoluções (ROADMAP)
+Os itens abaixo representam evoluções típicas para um ambiente produtivo, mas foram conscientemente deixados fora do escopo do desafio técnico:
 
-> Os itens abaixo são melhorias típicas para um serviço financeiro em produção. No desafio, priorizei o essencial para execução local e robustez do pipeline.
+- Dead Letter Queue **(DLQ)** e **retry por mensagem**
+- Implementação de retry com contador por mensagem e envio para DLQ (ex.: via TTL + DLX no RabbitMQ) para análise de falhas definitivas.
 
-- **DLQ/Retry por mensagem no consumer**
-  - Implementar retry com contador e, ao exceder, enviar para uma **Dead Letter Queue** (DLX/TTL) para análise.
-- **Retry/Exponential backoff no publisher**
-  - Garantir publicação robusta (ou padrão **Outbox** para entrega garantida).
-- **Teste de carga automatizado**
-  - Script k6/JMeter/nbomber para validar requisito de **50 RPS**.
+- Entrega garantida no publisher **(Outbox Pattern)**
+- Garantir publicação confiável de eventos mesmo em falhas entre commit da transação e envio ao broker.
+
 - **Observabilidade completa**
-  - Tracing distribuído (OpenTelemetry), métricas (Prometheus) e dashboards.
+
+- **Tracing distribuído (OpenTelemetry).**
+
+- **Métricas (Prometheus).**
+
+- **Dashboards e alertas (DataDog/Dynatrace/Grafana).**
+
 - **Cache no read model**
-  - Ex.: Redis para consultas repetidas por comerciante/dia.
-- **Config de produção**
-  - Validar issuer/audience, rotação de chave JWT, secrets vault, HSTS, etc.
-- **CI/CD**
-  - Pipeline com build, testes, lint, análise estática e publish de imagem.
+Ex.: Redis para otimizar consultas repetidas por comercianteId + dia.
+
+- Uso de secrets vault.
+
+- CI/CD
+Pipeline com build, testes automatizados, análise estática e publicação de imagens Docker.
+
 
 ---
 
