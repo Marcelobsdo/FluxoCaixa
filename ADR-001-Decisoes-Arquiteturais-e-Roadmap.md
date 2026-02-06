@@ -1,8 +1,5 @@
 # ADR-001 — Decisões Arquiteturais e Roadmap de Evolução
 
-## Status
-Aceito
-
 ## Contexto
 
 Este projeto foi desenvolvido como um desafio técnico de backend para controle de fluxo de caixa diário, envolvendo:
@@ -11,8 +8,6 @@ Este projeto foi desenvolvido como um desafio técnico de backend para controle 
 - Consolidação de saldo diário
 - Arquitetura resiliente, desacoplada e escalável
 - Execução local simples via Docker Compose
-
-O desafio não exigia um ambiente de produção completo, mas sim demonstrar **capacidade de tomada de decisão arquitetural**, boas práticas e visão de evolução do sistema.
 
 ## Decisões Arquiteturais
 
@@ -60,7 +55,7 @@ Cada contexto possui seu próprio banco PostgreSQL.
 **Justificativa**
 - Escrita transacional segura
 - Leitura performática e otimizada
-- Simplicidade (sem complexidade desnecessária)
+- Simplicidade
 
 **Consequências**
 - Dois modelos de acesso a dados
