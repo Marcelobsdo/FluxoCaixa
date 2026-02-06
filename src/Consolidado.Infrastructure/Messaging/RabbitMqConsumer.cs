@@ -213,7 +213,6 @@ public sealed class RabbitMqConsumer : IAsyncDisposable
             {
                 if (d is not IDictionary<string, object> dict) continue;
 
-                // "count" é tipicamente long/int
                 if (!dict.TryGetValue("count", out var countObj)) continue;
 
                 total += countObj switch
